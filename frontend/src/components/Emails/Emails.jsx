@@ -4,19 +4,27 @@ import useApi from "../../hooks/useApi";
 import { API_URLS } from "../../services/api.urls";
 import { Box, Checkbox, List } from "@mui/material";
 import Email from "../Email/Email";
+import NoMails from "../common/NoMail";
+import { EMPTY_TABS } from "../../constants/constants";
 
 const Emails = () => {
   const { openDrawer } = useOutletContext();
   const { type } = useParams();
-  const [selectedEmails, setSelectedEmails] = useState([]);
+  const [selectedEmails, setSelectedEmails] = useState([
+    { id: null, trash: false },
+  ]);
   const [refreshScreen, setRefreshScreen] = useState(false);
 
   const getEmailService = useApi(API_URLS.getEmailFromType);
   const moveEmailsToBin = useApi(API_URLS.moveEmailsToBin);
+  const deleteEmailsService = useApi(API_URLS.deleteEmail);
 
   const selectedAllEmails = (e) => {
     if (e.target.checked) {
-      const emails = getEmailService?.response?.map((email) => email._id);
+      const emails = getEmailService?.response?.map((email) => ({
+        id: email._id,
+        trash: email.trash,
+      }));
       setSelectedEmails(emails);
     } else {
       setSelectedEmails([]);
@@ -25,13 +33,23 @@ const Emails = () => {
 
   const deleteSelectedEmails = (e) => {
     if (type === "trash") {
+      deleteEmailsService.call(selectedEmails.map((email) => email.id));
+    } else if (type === "allmail") {
+      selectedEmails.forEach((email) => {
+        if (email.trash) {
+          deleteEmailsService.call([email.id]);
+        } else {
+          moveEmailsToBin.call([email.id]);
+        }
+      });
     } else {
-      moveEmailsToBin.call(selectedEmails);
+      moveEmailsToBin.call(selectedEmails.map((email) => email.id));
     }
     setRefreshScreen(!refreshScreen);
   };
 
   useEffect(() => {
+    setSelectedEmails([]);
     getEmailService.call({}, type);
   }, [type, refreshScreen]);
 
@@ -51,7 +69,7 @@ const Emails = () => {
         <Checkbox size="small" onChange={(e) => selectedAllEmails(e)} />
         <span
           className="material-symbols-outlined"
-          style={{cursor: "pointer"}}
+          style={{ cursor: "pointer" }}
           onClick={(e) => deleteSelectedEmails(e)}>
           delete
         </span>
@@ -63,9 +81,13 @@ const Emails = () => {
             email={email}
             selectedEmails={selectedEmails}
             setSelectedEmails={setSelectedEmails}
+            setRefreshScreen={setRefreshScreen}
           />
         ))}
       </List>
+      {getEmailService?.response?.length === 0 && (
+        <NoMails message={EMPTY_TABS[type]} />
+      )}
     </Box>
   );
 };

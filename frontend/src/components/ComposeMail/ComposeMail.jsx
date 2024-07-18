@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Dialog,
@@ -11,6 +11,7 @@ import {
 import { BorderBottom, Close } from "@mui/icons-material";
 import useApi from "../../hooks/useApi";
 import { API_URLS } from "../../services/api.urls";
+import { useParams } from "react-router-dom";
 
 const dialogStyle = {
   height: "90%",
@@ -114,8 +115,10 @@ const SendButtonWrapper = styled(Box)({
 
 const ComposeMail = ({ setOpenDialog, openDialog }) => {
   const [data, setData] = useState({});
+  const { type } = useParams();
   const sendEmailService = useApi(API_URLS.saveSentEmail);
   const saveDraftService = useApi(API_URLS.saveDraftEmails);
+  const getEmailService = useApi(API_URLS.getEmailFromType);
 
   const closeComposeMail = (e) => {
     e.preventDefault();
@@ -179,8 +182,8 @@ const ComposeMail = ({ setOpenDialog, openDialog }) => {
     } else {
       alert("Failed to send email.");
     }
-
     setOpenDialog(false);
+    getEmailService.call({}, type);
   };
 
   const deleteMail = (e) => {
@@ -219,7 +222,6 @@ const ComposeMail = ({ setOpenDialog, openDialog }) => {
           placeholder="Recipients"
           name="to"
           onChange={(e) => onValueChange(e)}
-          
         />
         <InputBase
           placeholder="Subject"

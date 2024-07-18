@@ -1,5 +1,5 @@
 import express from "express"
-import { getEmails, moveEmailsToBin, saveSentEmails } from "../controllers/email-controller.js";
+import { deleteEmails, getEmails, moveEmailsToBin, saveSentEmails, toggleStarredEmails, updateType } from "../controllers/email-controller.js";
 
 const routes = express.Router();
 
@@ -7,5 +7,8 @@ routes.post('/save', saveSentEmails)
 routes.get('/emails/:type', getEmails);
 routes.post('/save-draft', saveSentEmails);
 routes.post('/trash', moveEmailsToBin);
+routes.post('/starred', toggleStarredEmails);
+routes.delete('/delete', deleteEmails)
+routes.put('/label', updateType);
 
 export default routes;

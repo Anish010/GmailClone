@@ -9,7 +9,7 @@ import {
   AppsOutlined,
 } from "@mui/icons-material";
 import "./Header.css";
-import { gmailLogo } from "../../assets/constants";
+import { gmailLogo } from "../../constants/constants";
 
 const StyledAppBar = styled(AppBar)({
   backgroundColor: "#F6F8FC",
