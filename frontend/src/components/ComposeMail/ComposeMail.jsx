@@ -154,14 +154,14 @@ const ComposeMail = ({ setOpenDialog, openDialog }) => {
 
   const sendMail = (e) => {
     e.preventDefault();
-    // if (window.Email) {
-    //   window.Email.send({
-    //     ...config,
-    //     To: data.to,
-    //     Subject: data.subject,
-    //     Body: data.body,
-    //   }).then((message) => alert(message));
-    // }
+    if (window.Email) {
+      window.Email.send({
+        ...config,
+        To: data.to,
+        Subject: data.subject,
+        Body: data.body,
+      }).then((message) => alert(message));
+    }
 
     const payload = {
       to: data.to,

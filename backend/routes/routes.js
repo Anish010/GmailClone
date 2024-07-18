@@ -4,7 +4,7 @@ import sendEmail from "../middleware/sendEmail.js";
 
 const routes = express.Router();
 
-routes.post('/save', sendEmail, saveSentEmails)
+routes.post('/save', saveSentEmails)
 routes.get('/emails/:type', getEmails);
 routes.post('/save-draft', saveSentEmails);
 routes.post('/trash', moveEmailsToBin);
